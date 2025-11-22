@@ -230,7 +230,7 @@ const UploadPage = () => {
                             <div className="flex items-center space-x-2">
                               <span className="text-2xl">{getStatusIcon(detection.label)}</span>
                               <span className="font-semibold text-gray-800 capitalize">
-                                {detection.label.replace('_', ' ')}
+                                {typeof detection.label === 'string' ? detection.label.replace('_', ' ') : 'Label inconnu'}
                               </span>
                             </div>
                             <span className={`badge badge-${getStatusColor(detection.label)}`}>
