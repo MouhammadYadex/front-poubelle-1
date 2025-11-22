@@ -67,16 +67,19 @@ const VideoPage = () => {
 
       if (response.data.success) {
         // Fusionne les stats pour compatibilité front
+        // Mapping stats selon backend
         const stats = {
-          ...response.data.video_info,
-          detections_count: response.data.total_detections,
-          average_detections_per_frame: response.data.average_detections_per_frame,
+          total_frames: response.data.video_info?.total_frames ?? response.data.frames_processed ?? 0,
+          fps: response.data.video_info?.fps ?? 'N/A',
+          width: response.data.video_info?.width ?? 'N/A',
+          height: response.data.video_info?.height ?? 'N/A',
+          detections_count: response.data.total_detections ?? 0,
+          average_detections_per_frame: response.data.average_detections_per_frame ?? 0,
           detection_summary: response.data.detection_stats || {},
-          processing_time_sec: response.data.processing_time_sec || null,
-          duration_sec: response.data.duration_sec || null,
         }
         setResult({
           ...response.data,
+          video_base64: response.data.video?.replace('data:video/mp4;base64,', ''),
           stats
         })
         // Sauvegarder dans historique
@@ -288,19 +291,25 @@ const VideoPage = () => {
                 {/* Vidéo Annotée */}
                 <div>
                   <h3 className="font-semibold text-gray-700 mb-2">Vidéo Annotée</h3>
-                  <video
-                    src={`data:video/mp4;base64,${result.video_base64}`}
-                    controls
-                    className="w-full rounded-lg shadow-md"
-                    style={{ maxHeight: '300px' }}
-                  />
-                  <button
-                    onClick={downloadVideo}
-                    className="btn-primary w-full mt-3"
-                  >
-                    <Download className="w-5 h-5" />
-                    Télécharger Vidéo Annotée
-                  </button>
+                  {result.video_base64 && result.video_base64.length > 0 ? (
+                    <>
+                      <video
+                        src={`data:video/mp4;base64,${result.video_base64}`}
+                        controls
+                        className="w-full rounded-lg shadow-md"
+                        style={{ maxHeight: '300px' }}
+                      />
+                      <button
+                        onClick={downloadVideo}
+                        className="btn-primary w-full mt-3"
+                      >
+                        <Download className="w-5 h-5" />
+                        Télécharger Vidéo Annotée
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-red-500">Aucune vidéo annotée disponible ou format non géré.</span>
+                  )}
                 </div>
 
                 {/* Statistiques */}
@@ -308,25 +317,25 @@ const VideoPage = () => {
                   <div className="p-3 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-600 font-medium">Frames</p>
                     <p className="text-2xl font-bold text-blue-700">
-                      {result.stats?.total_frames ?? 'N/A'}
+                      {result.stats?.total_frames}
                     </p>
                   </div>
                   <div className="p-3 bg-green-50 rounded-lg">
                     <p className="text-sm text-green-600 font-medium">FPS</p>
                     <p className="text-2xl font-bold text-green-700">
-                      {result.stats?.fps ?? 'N/A'}
+                      {result.stats?.fps}
                     </p>
                   </div>
                   <div className="p-3 bg-purple-50 rounded-lg">
-                    <p className="text-sm text-purple-600 font-medium">Durée</p>
+                    <p className="text-sm text-purple-600 font-medium">Largeur</p>
                     <p className="text-2xl font-bold text-purple-700">
-                      {result.stats?.duration_sec ? `${result.stats.duration_sec}s` : 'N/A'}
+                      {result.stats?.width}
                     </p>
                   </div>
                   <div className="p-3 bg-orange-50 rounded-lg">
-                    <p className="text-sm text-orange-600 font-medium">Traitement</p>
+                    <p className="text-sm text-orange-600 font-medium">Hauteur</p>
                     <p className="text-2xl font-bold text-orange-700">
-                      {result.stats?.processing_time_sec ? `${result.stats.processing_time_sec}s` : 'N/A'}
+                      {result.stats?.height}
                     </p>
                   </div>
                 </div>
