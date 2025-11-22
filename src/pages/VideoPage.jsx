@@ -66,16 +66,27 @@ const VideoPage = () => {
       setProgress(100)
 
       if (response.data.success) {
-        setResult(response.data)
-        
+        // Fusionne les stats pour compatibilité front
+        const stats = {
+          ...response.data.video_info,
+          detections_count: response.data.total_detections,
+          average_detections_per_frame: response.data.average_detections_per_frame,
+          detection_summary: response.data.detection_stats || {},
+          processing_time_sec: response.data.processing_time_sec || null,
+          duration_sec: response.data.duration_sec || null,
+        }
+        setResult({
+          ...response.data,
+          stats
+        })
         // Sauvegarder dans historique
         const history = JSON.parse(localStorage.getItem('videoHistory') || '[]')
         history.unshift({
           id: Date.now(),
           filename: file.name,
           timestamp: new Date().toISOString(),
-          stats: response.data.stats,
-          detections_summary: response.data.stats.detection_summary
+          stats,
+          detections_summary: stats.detection_summary
         })
         localStorage.setItem('videoHistory', JSON.stringify(history.slice(0, 20)))
       }
@@ -297,25 +308,25 @@ const VideoPage = () => {
                   <div className="p-3 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-600 font-medium">Frames</p>
                     <p className="text-2xl font-bold text-blue-700">
-                      {result.stats.total_frames}
+                      {result.stats?.total_frames ?? 'N/A'}
                     </p>
                   </div>
                   <div className="p-3 bg-green-50 rounded-lg">
                     <p className="text-sm text-green-600 font-medium">FPS</p>
                     <p className="text-2xl font-bold text-green-700">
-                      {result.stats.fps}
+                      {result.stats?.fps ?? 'N/A'}
                     </p>
                   </div>
                   <div className="p-3 bg-purple-50 rounded-lg">
                     <p className="text-sm text-purple-600 font-medium">Durée</p>
                     <p className="text-2xl font-bold text-purple-700">
-                      {result.stats.duration_sec}s
+                      {result.stats?.duration_sec ? `${result.stats.duration_sec}s` : 'N/A'}
                     </p>
                   </div>
                   <div className="p-3 bg-orange-50 rounded-lg">
                     <p className="text-sm text-orange-600 font-medium">Traitement</p>
                     <p className="text-2xl font-bold text-orange-700">
-                      {result.stats.processing_time_sec}s
+                      {result.stats?.processing_time_sec ? `${result.stats.processing_time_sec}s` : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -323,17 +334,21 @@ const VideoPage = () => {
                 {/* Détections Summary */}
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h3 className="font-semibold text-gray-700 mb-2">
-                    Résumé des détections ({result.stats.detections_count} total)
+                    Résumé des détections ({result.stats?.detections_count ?? 0} total)
                   </h3>
                   <div className="space-y-2">
-                    {Object.entries(result.stats.detection_summary).map(([label, count]) => (
-                      <div key={label} className="flex items-center justify-between">
-                        <span className={`badge ${label.includes('pleine') ? 'badge-danger' : 'badge-success'}`}>
-                          {label}
-                        </span>
-                        <span className="font-bold text-gray-700">{count} frames</span>
-                      </div>
-                    ))}
+                    {result.stats?.detection_summary && Object.entries(result.stats.detection_summary).length > 0 ? (
+                      Object.entries(result.stats.detection_summary).map(([label, count]) => (
+                        <div key={label} className="flex items-center justify-between">
+                          <span className={`badge ${label.includes('pleine') ? 'badge-danger' : 'badge-success'}`}>
+                            {label}
+                          </span>
+                          <span className="font-bold text-gray-700">{count} frames</span>
+                        </div>
+                      ))
+                    ) : (
+                      <span className="text-gray-500">Aucune détection</span>
+                    )}
                   </div>
                 </div>
               </motion.div>
