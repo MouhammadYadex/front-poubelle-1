@@ -270,13 +270,15 @@ const UploadPage = () => {
                       <div>
                         <p className="text-xs text-gray-500">Temps d'inférence</p>
                         <p className="text-lg font-bold text-gray-800">
-                          {result.inference_time ? `${result.inference_time.toFixed(1)}ms` : 'N/A'}
+                          {typeof result.inference_time === 'number' ? `${result.inference_time.toFixed(1)}ms` : 'Non disponible'}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Confiance moyenne</p>
                         <p className="text-lg font-bold text-gray-800">
-                          {(result.detections.reduce((acc, d) => acc + d.confidence, 0) / result.detections.length * 100).toFixed(1)}%
+                          {result.detections && result.detections.length > 0
+                            ? (result.detections.reduce((acc, d) => acc + d.confidence, 0) / result.detections.length * 100).toFixed(1)
+                            : 'Non disponible'}%
                         </p>
                       </div>
                     </div>
