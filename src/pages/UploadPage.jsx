@@ -66,15 +66,17 @@ const UploadPage = () => {
   }
   
   const getStatusColor = (label) => {
-    if (label.toLowerCase().includes('pleine')) return 'danger'
-    if (label.toLowerCase().includes('vide')) return 'success'
-    return 'warning'
+  if (!label || typeof label !== 'string') return 'warning'
+  if (label.toLowerCase().includes('pleine')) return 'danger'
+  if (label.toLowerCase().includes('vide')) return 'success'
+  return 'warning'
   }
   
   const getStatusIcon = (label) => {
-    if (label.toLowerCase().includes('pleine')) return '🔴'
-    if (label.toLowerCase().includes('vide')) return '🟢'
-    return '🟡'
+  if (!label || typeof label !== 'string') return '🟡'
+  if (label.toLowerCase().includes('pleine')) return '🔴'
+  if (label.toLowerCase().includes('vide')) return '🟢'
+  return '🟡'
   }
   
   return (
