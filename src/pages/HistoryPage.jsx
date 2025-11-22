@@ -93,7 +93,9 @@ const HistoryPage = () => {
                       <div key={idx} className={`${getStatusBg(detection.label)} rounded-lg p-2`}>
                         <div className="flex items-center justify-between">
                           <span className={`font-medium text-sm ${getStatusColor(detection.label)}`}>
-                            {detection.label.replace('_', ' ')}
+                            {typeof detection.label === 'string' ? detection.label.replace('_', ' ')
+                              : typeof detection.class_name === 'string' ? detection.class_name.replace('_', ' ')
+                              : 'Label inconnu'}
                           </span>
                           <span className="text-xs font-semibold text-gray-700">
                             {(detection.confidence * 100).toFixed(1)}%
