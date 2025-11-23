@@ -49,9 +49,8 @@ const Layout = ({ children }) => {
               </nav>
               {/* Bouton téléchargement modèle Google Drive */}
               <a
-                href="https://drive.google.com/uc?export=download&id=VOTRE_ID_DRIVE"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="https://drive.google.com/uc?export=download&id=17t6Rv7Z1sbAtfyr2umhqLiL3ceXq-TT-"
+                download
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition text-sm"
               >
                 Télécharger le modèle
